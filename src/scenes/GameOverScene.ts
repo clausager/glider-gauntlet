@@ -101,7 +101,7 @@ export class GameOverScene extends Phaser.Scene {
 
     // Primary action: Next Level (on completion) or Retry (on game over)
     const primaryAction = (): void => {
-      audioManager.playMenuClick();
+      try { audioManager.playMenuClick(); } catch (_) { /* ignore */ }
       if (hasNextLevel) {
         this.scene.start('Game', { levelId: levelId + 1 });
       } else {
@@ -140,7 +140,7 @@ export class GameOverScene extends Phaser.Scene {
       retryBtn.on('pointerover', () => retryBtn.setColor('#ffffff'));
       retryBtn.on('pointerout', () => retryBtn.setColor('#aaaaaa'));
       retryBtn.on('pointerdown', () => {
-        audioManager.playMenuClick();
+        try { audioManager.playMenuClick(); } catch (_) { /* ignore */ }
         this.scene.start('Game', { levelId });
       });
 
@@ -157,7 +157,7 @@ export class GameOverScene extends Phaser.Scene {
     menuBtn.on('pointerover', () => menuBtn.setColor('#ffffff'));
     menuBtn.on('pointerout', () => menuBtn.setColor('#aaaaaa'));
     menuBtn.on('pointerdown', () => {
-      audioManager.playMenuClick();
+      try { audioManager.playMenuClick(); } catch (_) { /* ignore */ }
       this.scene.start('LevelSelect');
     });
 

@@ -177,8 +177,10 @@ export class AudioManager {
 
   stopMusic(): void {
     if (this.currentMusic) {
-      this.currentMusic.stop();
-      this.currentMusic.destroy();
+      try {
+        this.currentMusic.stop();
+        this.currentMusic.destroy();
+      } catch { /* ignore */ }
       this.currentMusic = null;
     }
   }

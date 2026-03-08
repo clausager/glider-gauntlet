@@ -94,9 +94,9 @@ export class MainMenuScene extends Phaser.Scene {
     startBtn.on('pointerover', () => startBtn.setColor('#ffffff'));
     startBtn.on('pointerout', () => startBtn.setColor('#00ff88'));
     startBtn.on('pointerdown', () => {
-      audioManager.init();
-      audioManager.playMenuClick();
-      audioManager.stopMusic();
+      try { audioManager.init(); } catch (_) { /* ignore */ }
+      try { audioManager.playMenuClick(); } catch (_) { /* ignore */ }
+      try { audioManager.stopMusic(); } catch (_) { /* ignore */ }
       this.scene.start('LevelSelect');
     });
 

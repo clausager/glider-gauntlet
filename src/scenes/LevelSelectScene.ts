@@ -46,7 +46,7 @@ export class LevelSelectScene extends Phaser.Scene {
     backBtn.on('pointerover', () => backBtn.setColor('#ffffff'));
     backBtn.on('pointerout', () => backBtn.setColor('#aaaaaa'));
     backBtn.on('pointerdown', () => {
-      audioManager.playMenuClick();
+      try { audioManager.playMenuClick(); } catch (_) { /* ignore */ }
       this.scene.start('MainMenu');
     });
   }
@@ -111,14 +111,19 @@ export class LevelSelectScene extends Phaser.Scene {
       }).setOrigin(0.5);
     }
 
-    // Make clickable
+    // Make clickable — use pointerup for reliable iOS touch handling
     card.setInteractive({ useHandCursor: true });
     card.on('pointerover', () => card.setStrokeStyle(3, 0xffffff));
     card.on('pointerout', () => card.setStrokeStyle(3, borderColor));
-    card.on('pointerdown', () => {
-      audioManager.playMenuClick();
-      audioManager.stopMusic();
+    let tapped = false;
+    const startLevel = (): void => {
+      if (tapped) return;
+      tapped = true;
+      try { audioManager.playMenuClick(); } catch (_) { /* ignore */ }
+      try { audioManager.stopMusic(); } catch (_) { /* ignore */ }
       this.scene.start('Game', { levelId });
-    });
+    };
+    card.on('pointerdown', startLevel);
+    card.on('pointerup', startLevel);
   }
 }
