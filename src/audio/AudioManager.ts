@@ -39,7 +39,7 @@ export class AudioManager {
     this.settings = loadSettings();
   }
 
-  /** Must be called from a user gesture (click/keydown) */
+  /** Must be called from a user gesture (click/keydown/touchstart) */
   init(): void {
     if (this.initialized) return;
     this.ctx = new AudioContext();
@@ -47,6 +47,22 @@ export class AudioManager {
     this.sfxGain.gain.value = this.settings.sfxVolume;
     this.sfxGain.connect(this.ctx.destination);
     this.initialized = true;
+    // Resume suspended context (mobile browsers require this)
+    this.resumeAudio();
+  }
+
+  /** Resume audio context if suspended — safe to call multiple times */
+  resumeAudio(): void {
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+    // Also unlock Phaser's sound manager (needed for mobile WebAudio)
+    if (this.phaserSound && 'locked' in this.phaserSound) {
+      const sm = this.phaserSound as Phaser.Sound.WebAudioSoundManager;
+      if (sm.locked) {
+        sm.unlock();
+      }
+    }
   }
 
   /** Register Phaser's sound manager so we can play loaded audio assets */
@@ -56,6 +72,10 @@ export class AudioManager {
 
   private ensureCtx(): AudioContext {
     if (!this.ctx) this.init();
+    // Always try to resume on mobile
+    if (this.ctx!.state === 'suspended') {
+      this.ctx!.resume();
+    }
     return this.ctx!;
   }
 

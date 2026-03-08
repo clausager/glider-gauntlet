@@ -116,7 +116,8 @@ export class GameScene extends Phaser.Scene {
       this.input.keyboard.on('keydown-P', () => this.togglePause());
     }
 
-    // Start level music
+    // Ensure audio is unlocked (mobile) and start level music
+    audioManager.resumeAudio();
     audioManager.playLevelMusic(this.levelConfig.id);
 
     // Countdown before starting

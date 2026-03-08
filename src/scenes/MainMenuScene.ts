@@ -8,16 +8,19 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    // Init audio on first user interaction
-    this.input.once('pointerdown', () => audioManager.init());
+    // Init audio on first user interaction (touch or keyboard)
+    const initAudio = (): void => {
+      audioManager.init();
+      audioManager.resumeAudio();
+      // Try to start menu music after unlocking
+      audioManager.playMenuMusic();
+    };
+    this.input.once('pointerdown', initAudio);
     if (this.input.keyboard) {
-      this.input.keyboard.once('keydown', () => audioManager.init());
+      this.input.keyboard.once('keydown', initAudio);
     }
 
     this.cameras.main.setBackgroundColor(0x020210);
-
-    // Start menu music (will play after user interacts)
-    this.time.delayedCall(100, () => audioManager.playMenuMusic());
 
     // Parallax backgrounds from Boot scene textures
     const nebula = this.add.tileSprite(0, 0, GAME_WIDTH, GAME_HEIGHT, 'bg-nebula');
