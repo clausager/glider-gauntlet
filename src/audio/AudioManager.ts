@@ -30,6 +30,9 @@ export class AudioManager {
   private phaserSound: Phaser.Sound.BaseSoundManager | null = null;
   private initialized = false;
 
+  // Pending music track (for when Phaser sound is locked on mobile)
+  private pendingTrack: string | null = null;
+
   // Thruster loop state
   private thrusterOsc: OscillatorNode | null = null;
   private thrusterGain: GainNode | null = null;
@@ -68,6 +71,16 @@ export class AudioManager {
   /** Register Phaser's sound manager so we can play loaded audio assets */
   setPhaserSound(soundManager: Phaser.Sound.BaseSoundManager): void {
     this.phaserSound = soundManager;
+    // When Phaser unlocks audio (after first user gesture), retry pending music
+    if ('locked' in soundManager && (soundManager as Phaser.Sound.WebAudioSoundManager).locked) {
+      soundManager.once('unlocked', () => {
+        // If we were trying to play music, restart it now
+        if (this.pendingTrack) {
+          this.playTrack(this.pendingTrack);
+          this.pendingTrack = null;
+        }
+      });
+    }
   }
 
   private ensureCtx(): AudioContext {
@@ -141,11 +154,25 @@ export class AudioManager {
   private playTrack(key: string): void {
     this.stopMusic();
     if (!this.phaserSound) return;
-    this.currentMusic = this.phaserSound.add(key, {
-      volume: this.settings.musicVolume,
-      loop: true,
-    });
-    this.currentMusic.play();
+
+    // If Phaser sound is still locked (mobile), queue it for later
+    const sm = this.phaserSound as Phaser.Sound.WebAudioSoundManager;
+    if ('locked' in sm && sm.locked) {
+      this.pendingTrack = key;
+      return;
+    }
+
+    try {
+      this.currentMusic = this.phaserSound.add(key, {
+        volume: this.settings.musicVolume,
+        loop: true,
+      });
+      this.currentMusic.play();
+      this.pendingTrack = null;
+    } catch {
+      // If play fails, queue for retry after unlock
+      this.pendingTrack = key;
+    }
   }
 
   stopMusic(): void {

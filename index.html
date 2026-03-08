@@ -6,7 +6,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="screen-orientation" content="landscape" />
   <title>Glider Gauntlet</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,6 +18,8 @@
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       user-select: none;
+      /* Safe area insets for notch devices */
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
     #game-container {
       position: fixed;
@@ -55,24 +56,22 @@
     @media (orientation: portrait) and (max-width: 900px) {
       #rotate-message { display: flex; }
     }
-    /* Fullscreen button for mobile */
+    /* Fullscreen button — only on Android (iOS has no fullscreen API) */
     #fs-btn {
       display: none;
       position: fixed;
       top: 8px; right: 8px;
       z-index: 9999;
-      background: rgba(0, 255, 255, 0.15);
-      border: 1px solid rgba(0, 255, 255, 0.4);
+      background: rgba(0, 255, 255, 0.2);
+      border: 1px solid rgba(0, 255, 255, 0.5);
       color: #00ffff;
       font-family: monospace;
-      font-size: 13px;
-      padding: 6px 12px;
-      border-radius: 4px;
+      font-size: 14px;
+      padding: 8px 14px;
+      border-radius: 6px;
       cursor: pointer;
       touch-action: manipulation;
-    }
-    @media (hover: none) and (pointer: coarse) {
-      #fs-btn { display: block; }
+      -webkit-tap-highlight-color: transparent;
     }
   </style>
 </head>
@@ -80,28 +79,61 @@
   <div id="rotate-message">
     <div class="icon">📱↔️</div>
     <div>Rotate your device to landscape</div>
-    <div class="sub">Then tap anywhere to play</div>
+    <div class="sub">Then tap to play</div>
   </div>
   <button id="fs-btn">⛶ Fullscreen</button>
   <div id="game-container"></div>
   <script type="module" src="/src/main.ts"></script>
   <script>
-    // Fullscreen button (reliable because it's a direct click handler on a button)
-    var fsBtn = document.getElementById('fs-btn');
-    fsBtn.addEventListener('click', function() {
-      var el = document.documentElement;
-      if (el.requestFullscreen) el.requestFullscreen().catch(function(){});
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      if (screen.orientation && screen.orientation.lock) {
-        screen.orientation.lock('landscape').catch(function(){});
+    (function() {
+      var fsBtn = document.getElementById('fs-btn');
+      var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      // Only show fullscreen button on touch devices that support the API (Android)
+      if (isTouch && !isIOS && document.documentElement.requestFullscreen) {
+        fsBtn.style.display = 'block';
       }
-      fsBtn.style.display = 'none';
-    });
-    // Hide button if already fullscreen
-    document.addEventListener('fullscreenchange', function() {
-      if (document.fullscreenElement) fsBtn.style.display = 'none';
-      else if ('ontouchstart' in window) fsBtn.style.display = 'block';
-    });
+
+      function goFullscreen() {
+        var el = document.documentElement;
+        var rfs = el.requestFullscreen || el.webkitRequestFullscreen;
+        if (rfs) {
+          rfs.call(el).then(function() {
+            if (screen.orientation && screen.orientation.lock) {
+              screen.orientation.lock('landscape').catch(function(){});
+            }
+            fsBtn.style.display = 'none';
+          }).catch(function(){});
+        }
+      }
+
+      // Direct touchend handler (more reliable than click for fullscreen)
+      fsBtn.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        goFullscreen();
+      });
+      fsBtn.addEventListener('click', goFullscreen);
+
+      document.addEventListener('fullscreenchange', function() {
+        if (document.fullscreenElement) {
+          fsBtn.style.display = 'none';
+        } else if (isTouch && !isIOS) {
+          fsBtn.style.display = 'block';
+        }
+      });
+
+      // iOS: show hint to add to home screen for fullscreen experience
+      if (isIOS && isTouch && !window.navigator.standalone) {
+        var iosHint = document.createElement('div');
+        iosHint.style.cssText = 'position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:9999;background:rgba(0,40,40,0.9);color:#00ffff;font-family:monospace;font-size:12px;padding:8px 16px;border-radius:8px;border:1px solid rgba(0,255,255,0.3);text-align:center;white-space:nowrap;';
+        iosHint.textContent = 'Tap Share ⬆ → Add to Home Screen for fullscreen';
+        document.body.appendChild(iosHint);
+        setTimeout(function() { iosHint.style.opacity = '0'; iosHint.style.transition = 'opacity 1s'; }, 8000);
+        setTimeout(function() { iosHint.remove(); }, 9000);
+      }
+    })();
   </script>
 </body>
 </html>
