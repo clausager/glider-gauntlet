@@ -1,0 +1,22 @@
+{
+  "name": "Glider Gauntlet",
+  "short_name": "Glider Gauntlet",
+  "description": "Navigate through space obstacle courses with your glider!",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#060618",
+  "theme_color": "#060618",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0a0a2e"/>
+      <stop offset="100%" stop-color="#060618"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-strong">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <!-- Stars -->
+  <circle cx="80" cy="90" r="2" fill="#ffffff" opacity="0.6"/>
+  <circle cx="420" cy="70" r="1.5" fill="#ffffff" opacity="0.5"/>
+  <circle cx="150" cy="400" r="2" fill="#ffffff" opacity="0.4"/>
+  <circle cx="380" cy="350" r="1.5" fill="#ffffff" opacity="0.5"/>
+  <circle cx="450" cy="200" r="2" fill="#ffffff" opacity="0.3"/>
+  <circle cx="60" cy="300" r="1.5" fill="#ffffff" opacity="0.4"/>
+  <circle cx="300" cy="440" r="2" fill="#ffffff" opacity="0.5"/>
+  <circle cx="200" cy="60" r="1" fill="#ffffff" opacity="0.6"/>
+  <!-- Glider trail -->
+  <path d="M100 340 Q200 300 280 280" stroke="#00ffff" stroke-width="3" fill="none" opacity="0.2" filter="url(#glow)"/>
+  <path d="M140 330 Q220 295 280 275" stroke="#00ffff" stroke-width="2" fill="none" opacity="0.15"/>
+  <!-- Astronaut body -->
+  <g filter="url(#glow)" transform="translate(256, 250)">
+    <!-- Glider wings -->
+    <path d="M-10 0 L-100 50 L-80 35 L-10 10 Z" fill="#00cccc" opacity="0.8"/>
+    <path d="M10 0 L100 50 L80 35 L10 10 Z" fill="#00cccc" opacity="0.8"/>
+    <!-- Wing glow edge -->
+    <path d="M-10 0 L-100 50" stroke="#00ffff" stroke-width="2" fill="none"/>
+    <path d="M10 0 L100 50" stroke="#00ffff" stroke-width="2" fill="none"/>
+    <!-- Body -->
+    <ellipse cx="0" cy="15" rx="16" ry="28" fill="#ccddee"/>
+    <!-- Helmet -->
+    <circle cx="0" cy="-18" r="24" fill="#aabbcc" stroke="#88aacc" stroke-width="2"/>
+    <!-- Visor -->
+    <ellipse cx="0" cy="-18" rx="18" ry="16" fill="#0a1530"/>
+    <ellipse cx="0" cy="-18" rx="18" ry="16" fill="none" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
+    <!-- Visor reflection -->
+    <ellipse cx="-5" cy="-22" rx="6" ry="4" fill="#00ffff" opacity="0.15" transform="rotate(-15)"/>
+    <!-- Legs -->
+    <line x1="-8" y1="40" x2="-14" y2="60" stroke="#ccddee" stroke-width="6" stroke-linecap="round"/>
+    <line x1="8" y1="40" x2="14" y2="60" stroke="#ccddee" stroke-width="6" stroke-linecap="round"/>
+    <!-- Boots -->
+    <ellipse cx="-16" cy="62" rx="8" ry="5" fill="#445566"/>
+    <ellipse cx="16" cy="62" rx="8" ry="5" fill="#445566"/>
+  </g>
+  <!-- Neon border accent -->
+  <rect x="8" y="8" width="496" height="496" rx="90" fill="none" stroke="#00ffff" stroke-width="3" opacity="0.25"/>
+</svg>
