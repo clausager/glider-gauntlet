@@ -32,10 +32,10 @@
   <circle cx="300" cy="440" r="2" fill="#ffffff" opacity="0.5"/>
   <circle cx="200" cy="60" r="1" fill="#ffffff" opacity="0.6"/>
   <!-- Glider trail -->
-  <path d="M100 340 Q200 300 280 280" stroke="#00ffff" stroke-width="3" fill="none" opacity="0.2" filter="url(#glow)"/>
-  <path d="M140 330 Q220 295 280 275" stroke="#00ffff" stroke-width="2" fill="none" opacity="0.15"/>
+  <path d="M30 380 Q150 310 240 270" stroke="#00ffff" stroke-width="4" fill="none" opacity="0.2" filter="url(#glow)"/>
+  <path d="M80 370 Q170 310 240 265" stroke="#00ffff" stroke-width="3" fill="none" opacity="0.15"/>
   <!-- Astronaut body -->
-  <g filter="url(#glow)" transform="translate(256, 250)">
+  <g filter="url(#glow)" transform="translate(256, 240) scale(2.2)">
     <!-- Glider wings -->
     <path d="M-10 0 L-100 50 L-80 35 L-10 10 Z" fill="#00cccc" opacity="0.8"/>
     <path d="M10 0 L100 50 L80 35 L10 10 Z" fill="#00cccc" opacity="0.8"/>
